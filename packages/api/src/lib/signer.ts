@@ -6,9 +6,14 @@ declare const crypto: Crypto;
 
 export class ShutoURLSigner {
   private readonly config: SignerConfig;
+  private readonly endpoint: string;
 
-  constructor(config: SignerConfig) {
+  constructor(config: SignerConfig, endpoint = 'image') {
     this.config = config;
+    if (endpoint !== 'image' && endpoint !== 'download') {
+      throw new Error("endpoint must be either 'image' or 'download'");
+    }
+    this.endpoint = endpoint;
   }
 
   private getKey(keyId?: string): SigningKey {
@@ -48,102 +53,111 @@ export class ShutoURLSigner {
       .join('');
   }
 
-  private sortParams(
+  private encodeParams(
     params: Record<string, string | number | boolean | undefined>
   ): string {
-    return Object.entries(params)
+    const urlParams = new URLSearchParams();
+    const entries = Object.entries(params)
       .filter(([_, value]) => value !== undefined)
-      .map(([key, value]) => [key, value!.toString()])
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(
-        ([key, value]) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-      )
-      .join('&');
-  }
+      .sort(([a], [b]) => a.localeCompare(b));
 
-  private isAlreadyEncoded(path: string): boolean {
-    try {
-      return path !== decodeURIComponent(path);
-    } catch {
-      return false;
+    for (const [key, value] of entries) {
+      urlParams.append(key, value!.toString());
     }
+
+    return urlParams.toString();
   }
 
-  private encodePath(path: string): string {
-    if (this.isAlreadyEncoded(path)) {
-      return path;
+  private normalizePath(path: string): string {
+    // Remove leading slashes
+    let normalizedPath = path.replace(/^\/+/, '');
+
+    // Remove /v2/{endpoint}/ prefix if it exists
+    const prefix = `v2/${this.endpoint}/`;
+    if (normalizedPath.startsWith(prefix)) {
+      normalizedPath = normalizedPath.substring(prefix.length);
     }
-    // Split on forward slashes, but keep leading/trailing slashes
-    const parts = path.split(/(?=\/)|(?<=\/)/);
-    return parts
-      .map((part) => (part === '/' ? part : encodeURIComponent(part)))
-      .join('');
-  }
 
-  private buildUrl(
-    path: string,
-    params: Record<string, string | number | boolean | undefined>,
-    signatureParams: Record<string, string>
-  ): string {
-    const encodedPath = this.encodePath(path);
-    const allParams = { ...params, ...signatureParams };
-    const queryString = this.sortParams(allParams);
-    return `${encodedPath}${queryString ? '?' + queryString : ''}`;
+    return normalizedPath;
   }
 
   async generateSignedURL(
     path: string,
     options: SignUrlOptions
   ): Promise<string> {
+    // Normalize the path
+    const normalizedPath = this.normalizePath(path);
+
+    // Create and sort parameters
+    const params: Record<string, string | number | boolean | undefined> =
+      options.params ? { ...options.params } : {};
+
+    const key = this.getKey();
+    const encodedParams = this.encodeParams(params);
     const timestamp = this.config.validityWindow
       ? Math.floor(Date.now() / 1000)
       : undefined;
-    const key = this.getKey();
-    const sortedParams = this.sortParams(options.params || {});
 
+    // Create the message exactly as in Go
     const message = timestamp
-      ? `${path}|${timestamp}|${sortedParams}`
-      : `${path}|${sortedParams}`;
+      ? `${normalizedPath}|${timestamp}|${encodedParams}`
+      : `${normalizedPath}|${encodedParams}`;
+
+    console.log('message', message);
 
     const signature = await this.generateSignature(message, key.secret);
 
-    const signatureParams: Record<string, string> = {
-      kid: key.id,
-      sig: signature,
-    };
-
+    // Add signature parameters to the URL parameters
+    const urlParams = new URLSearchParams(encodedParams);
+    urlParams.set('kid', key.id);
+    urlParams.set('sig', signature);
     if (timestamp) {
-      signatureParams.ts = timestamp.toString();
+      urlParams.set('ts', timestamp.toString());
     }
 
-    return this.buildUrl(path, options.params || {}, signatureParams);
+    // Construct the final URL
+    const finalPath = `/v2/${this.endpoint}/${normalizedPath}`;
+    return `${finalPath}${
+      urlParams.toString() ? '?' + urlParams.toString() : ''
+    }`;
   }
 
   async validateSignedURL(url: string): Promise<boolean> {
     try {
-      const fullUrl = url.startsWith('http') ? url : `http://example.com${url}`;
-      const urlObj = new URL(fullUrl);
-      const path = decodeURIComponent(urlObj.pathname);
-      const params = Object.fromEntries(urlObj.searchParams);
+      const urlObj = new URL(
+        url.startsWith('http') ? url : `http://example.com${url}`
+      );
+      const path = this.normalizePath(urlObj.pathname);
+      const params = new URLSearchParams(urlObj.search);
 
-      const { kid, sig, ts, ...otherParams } = params;
+      const signature = params.get('sig');
+      const keyId = params.get('kid');
+      const timestamp = params.get('ts');
 
-      if (!kid || !sig) {
+      if (!signature || !keyId) {
         return false;
       }
 
-      const key = this.getKey(kid);
-      const sortedParams = this.sortParams(otherParams);
+      // Create a copy of parameters without signature fields
+      const validationParams: Record<string, string> = {};
+      for (const [key, value] of params.entries()) {
+        if (key !== 'sig' && key !== 'kid' && key !== 'ts') {
+          validationParams[key] = value;
+        }
+      }
 
-      const message = ts
-        ? `${path}|${ts}|${sortedParams}`
-        : `${path}|${sortedParams}`;
+      const encodedParams = this.encodeParams(validationParams);
+      const key = this.getKey(keyId);
 
-      if (this.config.validityWindow && ts) {
-        const timestamp = parseInt(ts, 10);
+      // Create the message exactly as in Go
+      const message = timestamp
+        ? `${path}|${timestamp}|${encodedParams}`
+        : `${path}|${encodedParams}`;
+
+      if (this.config.validityWindow && timestamp) {
+        const ts = parseInt(timestamp, 10);
         const now = Math.floor(Date.now() / 1000);
-        if (now - timestamp > this.config.validityWindow) {
+        if (now - ts > this.config.validityWindow) {
           return false;
         }
       }
@@ -152,7 +166,7 @@ export class ShutoURLSigner {
         message,
         key.secret
       );
-      return computedSignature === sig;
+      return computedSignature === signature;
     } catch {
       return false;
     }

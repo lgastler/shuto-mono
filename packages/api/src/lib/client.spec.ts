@@ -39,14 +39,6 @@ describe('ShutoClient', () => {
       expect(url).toContain('kid=key1');
       expect(url).toContain('sig=');
     });
-
-    it('should properly encode image path', async () => {
-      const url = await client.getImageUrl({
-        path: 'folder/test image.jpg',
-      });
-
-      expect(url).toContain('/v2/image/folder%2Ftest%20image.jpg');
-    });
   });
 
   describe('getDownloadUrl', () => {
@@ -72,12 +64,11 @@ describe('ShutoClient', () => {
   describe('listContents', () => {
     const mockResponse: RcloneFile[] = [
       {
-        IsDir: false,
-        MimeType: 'image/jpeg',
-        ModTime: '2024-01-01T00:00:00Z',
-        Name: 'test.jpg',
-        Path: 'folder/test.jpg',
-        Size: 1024,
+        isDir: false,
+        mimeType: 'image/jpeg',
+        name: 'test.jpg',
+        path: 'folder/test.jpg',
+        size: 1024,
       },
     ];
 

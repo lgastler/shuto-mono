@@ -39,12 +39,17 @@ export class ShutoClient {
       ...params,
     };
     delete queryParams.path;
+    delete queryParams.excludeBaseUrl;
 
-    const path = `/v2/image/${encodeURIComponent(params.path)}`;
-    return this.signer.generateSignedURL(path, {
+    const path = `/v2/image/${params.path}`;
+    const signedUrl = await this.signer.generateSignedURL(path, {
       endpoint: 'image',
       params: queryParams,
     });
+
+    return params.excludeBaseUrl
+      ? signedUrl
+      : `${this.config.baseUrl}${signedUrl}`;
   }
 
   async getDownloadUrl(params: DownloadParams): Promise<string> {

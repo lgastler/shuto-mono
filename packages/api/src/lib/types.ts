@@ -19,6 +19,7 @@ export interface ImageParams {
   dpr?: number;
   blur?: number;
   dl?: boolean;
+  excludeBaseUrl?: boolean;
 }
 
 export interface DownloadParams {
@@ -26,12 +27,11 @@ export interface DownloadParams {
 }
 
 export interface RcloneFile {
-  IsDir: boolean;
-  MimeType: string;
-  ModTime: string;
-  Name: string;
-  Path: string;
-  Size: number;
+  isDir: boolean;
+  mimeType: string;
+  name: string;
+  path: string;
+  size: number;
 }
 
 export interface SigningKey {
