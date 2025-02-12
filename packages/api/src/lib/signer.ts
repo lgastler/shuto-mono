@@ -103,8 +103,6 @@ export class ShutoURLSigner {
       ? `${normalizedPath}|${timestamp}|${encodedParams}`
       : `${normalizedPath}|${encodedParams}`;
 
-    console.log('message', message);
-
     const signature = await this.generateSignature(message, key.secret);
 
     // Add signature parameters to the URL parameters

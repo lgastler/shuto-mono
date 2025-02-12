@@ -1,11 +1,11 @@
-# @shuto/api
+# @shuto-img/api
 
 A TypeScript/JavaScript client for interacting with the Shuto API, including URL signing capabilities.
 
 ## Installation
 
 ```bash
-npm install @shuto/api
+npm install @shuto-img/api
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ npm install @shuto/api
 ### Basic Setup
 
 ```typescript
-import { ShutoClient, ShutoURLSigner } from '@shuto/api';
+import { ShutoClient, ShutoURLSigner } from '-img/api';
 
 // Initialize the client with signer configuration
 const client = new ShutoClient(

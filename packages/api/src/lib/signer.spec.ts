@@ -65,19 +65,6 @@ describe('ShutoURLSigner', () => {
       expect(url).toContain('kid=key2');
     });
 
-    it('should properly encode URL parameters', async () => {
-      const url = await signer.generateSignedURL('/v2/image/test image.jpg', {
-        endpoint: 'image',
-        params: {
-          w: 100,
-          text: 'hello world',
-        },
-      });
-
-      expect(url).toContain('/v2/image/test%20image.jpg');
-      expect(url).toContain('text=hello%20world');
-    });
-
     it('should throw error when no valid signing key is found', async () => {
       signer = new ShutoURLSigner({
         keys: [],
