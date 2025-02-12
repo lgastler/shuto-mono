@@ -1,9 +1,9 @@
 {
-  "name": "@shuto/react-example",
+  "name": "@shuto-img/react-example",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@shuto/api": "workspace:*",
-    "@shuto/react": "workspace:*"
+    "@shuto-img/api": "workspace:*",
+    "@shuto-img/react": "workspace:*"
   }
 }

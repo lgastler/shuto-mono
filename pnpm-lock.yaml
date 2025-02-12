@@ -141,10 +141,10 @@ importers:
 
   apps/react-example:
     dependencies:
-      '@shuto/api':
+      '@shuto-img/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@shuto/react':
+      '@shuto-img/react':
         specifier: workspace:*
         version: link:../../packages/react
 
@@ -152,7 +152,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@shuto/api':
+      '@shuto-img/api':
         specifier: workspace:*
         version: link:../api
 

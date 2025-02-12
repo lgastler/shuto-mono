@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { RcloneFile } from '@shuto/api';
-import { ShutoProvider, ShutoImage, useShutoClient } from '@shuto/react';
+import { RcloneFile } from '@shuto-img/api';
+import { ShutoProvider, ShutoImage, useShutoClient } from '@shuto-img/react';
 
 function ImageGallery() {
   const folder = 'examples/5';
