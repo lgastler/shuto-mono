@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ShutoClient } from '@shuto/api';
+import { ShutoClient } from '@shuto-img/api';
 import { ShutoContext } from './shuto-provider';
 
 export function useShutoClient(): ShutoClient {

@@ -1,5 +1,5 @@
 import { ReactNode, createContext } from 'react';
-import { ShutoClient, ShutoConfig, SignerConfig } from '@shuto/api';
+import { ShutoClient, ShutoConfig, SignerConfig } from '@shuto-img/api';
 
 interface ShutoContextValue {
   client: ShutoClient;

@@ -1,18 +1,32 @@
-import { act, renderHook } from '@testing-library/react';
 import * as React from 'react';
+import { renderHook } from '@testing-library/react';
 
 import useShutoClient from './shuto-client';
+import ShutoProvider from './shuto-provider';
 
 describe('useShutoClient', () => {
   it('should render successfully', () => {
-    const { result } = renderHook(() => useShutoClient());
+    const mockConfig = {
+      baseUrl: 'http://example.com',
+    };
 
-    expect(result.current.count).toBe(0);
+    const mockSignerConfig = {
+      keys: [
+        {
+          id: 'test-key-id',
+          secret: 'test-secret-key',
+        },
+      ],
+    };
 
-    act(() => {
-      result.current.increment();
-    });
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ShutoProvider config={mockConfig} signerConfig={mockSignerConfig}>
+        {children}
+      </ShutoProvider>
+    );
 
-    expect(result.current.count).toBe(1);
+    const { result } = renderHook(() => useShutoClient(), { wrapper });
+
+    expect(result.current).toBeDefined();
   });
 });

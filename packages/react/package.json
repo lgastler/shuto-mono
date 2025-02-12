@@ -1,5 +1,5 @@
 {
-  "name": "@shuto/react",
+  "name": "@shuto-img/react",
   "version": "0.0.1",
   "type": "module",
   "main": "./dist/index.js",
@@ -14,6 +14,6 @@
     }
   },
   "dependencies": {
-    "@shuto/api": "workspace:*"
+    "@shuto-img/api": "workspace:*"
   }
 }

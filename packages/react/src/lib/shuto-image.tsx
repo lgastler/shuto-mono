@@ -1,5 +1,5 @@
 import { ImgHTMLAttributes, useEffect, useState } from 'react';
-import { ImageParams } from '@shuto/api';
+import { ImageParams } from '@shuto-img/api';
 import { useShutoClient } from './shuto-client';
 
 export interface ShutoImageProps
