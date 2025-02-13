@@ -33,14 +33,14 @@ export interface BaseFile {
   isDir: boolean;
 }
 
+export interface NonImageFile extends BaseFile {
+  mimeType: string;
+}
+
 export interface ImageFile extends BaseFile {
   mimeType: `image/${string}`;
   width: number;
   height: number;
-}
-
-export interface NonImageFile extends BaseFile {
-  mimeType: string;
 }
 
 export type File = ImageFile | NonImageFile;
