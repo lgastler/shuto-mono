@@ -1,9 +1,9 @@
 {
   "name": "@shuto-img/react-example",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "dependencies": {
-    "@shuto-img/api": "0.1.2",
-    "@shuto-img/react": "0.1.1"
+    "@shuto-img/api": "0.1.3",
+    "@shuto-img/react": "0.1.2"
   }
 }

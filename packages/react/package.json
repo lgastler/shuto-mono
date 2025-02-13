@@ -1,6 +1,6 @@
 {
   "name": "@shuto-img/react",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publishConfig": {
     "access": "public"
   },
@@ -17,6 +17,6 @@
     }
   },
   "dependencies": {
-    "@shuto-img/api": "0.1.2"
+    "@shuto-img/api": "0.1.3"
   }
 }
