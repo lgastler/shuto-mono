@@ -62,6 +62,15 @@ export class ShutoClient {
     });
   }
 
+  private isImageFile(file: File): file is ImageFile {
+    return (
+      'width' in file &&
+      'height' in file &&
+      typeof file.width === 'number' &&
+      typeof file.height === 'number'
+    );
+  }
+
   async listContents(path: string): Promise<(NonImageFile | ImageFile)[]> {
     if (!this.config.apiKey) {
       throw new Error('API key is required for listing contents');
@@ -77,13 +86,11 @@ export class ShutoClient {
     );
 
     const files = await this.handleResponse<File[]>(response);
-    const resultFiles = files.map((file) => {
-      if ('width' in file && 'height' in file) {
-        return file as ImageFile;
+    return files.map((file) => {
+      if (this.isImageFile(file)) {
+        return file;
       }
       return file as NonImageFile;
     });
-
-    return resultFiles;
   }
 }
