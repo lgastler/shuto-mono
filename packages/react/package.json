@@ -1,6 +1,6 @@
 {
   "name": "@shuto-img/react",
-  "version": "0.1.5",
+  "version": "0.1.1",
   "publishConfig": {
     "access": "public"
   },

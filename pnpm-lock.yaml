@@ -145,7 +145,7 @@ importers:
         specifier: 0.2.2
         version: link:../../packages/api
       '@shuto-img/react':
-        specifier: 0.1.5
+        specifier: 0.1.1
         version: link:../../packages/react
 
   packages/api: {}
