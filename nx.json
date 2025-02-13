@@ -76,17 +76,6 @@
     "projects": [
       "packages/*"
     ],
-    "changelog": {
-      "projectChangelogs": {
-        "createRelease": "github",
-        "renderOptions": {
-          "authors": false,
-          "mapAuthorsToGitHubUsernames": false,
-          "commitReferences": true,
-          "versionTitleDate": true
-        }
-      }
-    },
     "version": {
       "conventionalCommits": true
     },
