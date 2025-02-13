@@ -2,7 +2,7 @@ import {
   ShutoConfig,
   ImageParams,
   DownloadParams,
-  RcloneFile,
+  File,
   ErrorResponse,
   SignerConfig,
 } from './types.js';
@@ -60,7 +60,7 @@ export class ShutoClient {
     });
   }
 
-  async listContents(path: string): Promise<RcloneFile[]> {
+  async listContents(path: string): Promise<File[]> {
     if (!this.config.apiKey) {
       throw new Error('API key is required for listing contents');
     }
@@ -74,6 +74,6 @@ export class ShutoClient {
       }
     );
 
-    return this.handleResponse<RcloneFile[]>(response);
+    return this.handleResponse<File[]>(response);
   }
 }

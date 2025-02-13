@@ -26,12 +26,13 @@ export interface DownloadParams {
   path: string;
 }
 
-export interface RcloneFile {
-  isDir: boolean;
-  mimeType: string;
-  name: string;
+export interface File {
   path: string;
   size: number;
+  mimeType: string;
+  isDir: boolean;
+  width: number;
+  height: number;
 }
 
 export interface SigningKey {
