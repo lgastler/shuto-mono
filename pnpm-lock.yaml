@@ -142,10 +142,10 @@ importers:
   apps/react-example:
     dependencies:
       '@shuto-img/api':
-        specifier: 0.2.1
+        specifier: 0.2.2
         version: link:../../packages/api
       '@shuto-img/react':
-        specifier: 0.1.4
+        specifier: 0.1.5
         version: link:../../packages/react
 
   packages/api: {}
@@ -153,7 +153,7 @@ importers:
   packages/react:
     dependencies:
       '@shuto-img/api':
-        specifier: 0.2.1
+        specifier: 0.2.2
         version: link:../api
 
 packages:
