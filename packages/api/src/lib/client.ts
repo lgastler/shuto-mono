@@ -77,11 +77,13 @@ export class ShutoClient {
     );
 
     const files = await this.handleResponse<File[]>(response);
-    return files.map((file) => {
+    const resultFiles = files.map((file) => {
       if ('width' in file && 'height' in file) {
         return file as ImageFile;
       }
       return file as NonImageFile;
     });
+
+    return resultFiles;
   }
 }
