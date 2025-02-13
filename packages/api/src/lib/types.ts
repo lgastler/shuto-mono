@@ -26,14 +26,24 @@ export interface DownloadParams {
   path: string;
 }
 
-export interface File {
+export interface BaseFile {
   path: string;
   size: number;
   mimeType: string;
   isDir: boolean;
+}
+
+export interface ImageFile extends BaseFile {
+  mimeType: `image/${string}`;
   width: number;
   height: number;
 }
+
+export interface NonImageFile extends BaseFile {
+  mimeType: string;
+}
+
+export type File = ImageFile | NonImageFile;
 
 export interface SigningKey {
   id: string;
