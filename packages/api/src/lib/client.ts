@@ -5,6 +5,8 @@ import {
   File,
   ErrorResponse,
   SignerConfig,
+  NonImageFile,
+  ImageFile,
 } from './types.js';
 import { ShutoURLSigner } from './signer.js';
 
@@ -60,7 +62,7 @@ export class ShutoClient {
     });
   }
 
-  async listContents(path: string): Promise<File[]> {
+  async listContents(path: string): Promise<(NonImageFile | ImageFile)[]> {
     if (!this.config.apiKey) {
       throw new Error('API key is required for listing contents');
     }
@@ -74,6 +76,12 @@ export class ShutoClient {
       }
     );
 
-    return this.handleResponse<File[]>(response);
+    const files = await this.handleResponse<File[]>(response);
+    return files.map((file) => {
+      if ('width' in file && 'height' in file) {
+        return file as ImageFile;
+      }
+      return file as NonImageFile;
+    });
   }
 }
