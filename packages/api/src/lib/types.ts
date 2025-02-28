@@ -26,8 +26,13 @@ export interface DownloadParams {
   path: string;
 }
 
+export interface ListContentsOptions {
+  filter?: string | RegExp;
+}
+
 export interface BaseFile {
   path: string;
+  fullPath: string;
   size: number;
   mimeType: string;
   isDir: boolean;

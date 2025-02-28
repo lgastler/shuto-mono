@@ -13,7 +13,7 @@ npm install @shuto-img/api
 ### Basic Setup
 
 ```typescript
-import { ShutoClient, ShutoURLSigner } from '-img/api';
+import { ShutoClient, ShutoURLSigner } from '@shuto-img/api';
 
 // Initialize the client with signer configuration
 const client = new ShutoClient(
@@ -49,7 +49,7 @@ const signer = new ShutoURLSigner({
 ```typescript
 // Generate a signed URL for image processing
 const imageUrl = await client.getImageUrl({
-  path: 'folder/image.jpg',
+  path: 'folder/image.jpg', // Path relative to your storage root
   w: 800,
   h: 600,
   fit: 'crop',
@@ -71,7 +71,21 @@ const downloadUrl = await client.getDownloadUrl({
 
 ```typescript
 // List contents of a directory (requires API key)
-const files = await client.listContents('folder/path');
+const files = await client.listContents('folder/path', {
+  filter: 'jpg', // Optional filter for file paths
+});
+
+// The returned files will have the following structure:
+interface File {
+  path: string; // File path from the API
+  fullPath: string; // Combined path, ready for use with getImageUrl
+  size: number;
+  mimeType: string;
+  isDir: boolean;
+  // For image files only:
+  width?: number;
+  height?: number;
+}
 ```
 
 ### Manual URL Signing
@@ -113,6 +127,23 @@ interface SignerConfig {
 interface SigningKey {
   id: string;
   secret: string;
+}
+
+interface ListContentsOptions {
+  filter?: string | RegExp; // Filter files by path
+}
+
+interface ImageParams {
+  path: string; // Path to the image, relative to storage root
+  w?: number; // Width
+  h?: number; // Height
+  fit?: 'clip' | 'crop' | 'fill'; // Resize mode
+  fm?: 'jpg' | 'jpeg' | 'png' | 'webp'; // Output format
+  q?: number; // Quality (1-100)
+  dpr?: number; // Device pixel ratio
+  blur?: number; // Blur amount
+  dl?: boolean; // Force download
+  excludeBaseUrl?: boolean; // Exclude baseUrl from the returned URL
 }
 ```
 
