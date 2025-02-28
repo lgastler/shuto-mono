@@ -44,8 +44,6 @@ function App() {
 
 ### Using the ShutoImage Component
 
-> **Note:** Server-focused components that help manage these security concerns more effectively are currently in development. These will provide a more secure way to handle sensitive operations while maintaining the ease of use of the React server-components.
-
 The `ShutoImage` component provides an easy way to display optimized images:
 
 ```tsx
@@ -54,17 +52,48 @@ import { ShutoImage } from '@shuto-img/react';
 function MyComponent() {
   return (
     <ShutoImage
-      path="folder/image.jpg"
-      params={{
-        w: 800,
-        h: 600,
-        fit: 'crop',
-        fm: 'webp',
-        q: 80,
-      }}
+      path="folder/image.jpg" // Path relative to your storage root
+      w={800} // Width
+      h={600} // Height
+      fit="crop" // Resize mode
+      fm="webp" // Output format
+      q={80} // Quality
       alt="My optimized image"
       className="my-image-class"
+      loading="lazy" // Enable lazy loading
+      responsive // Enable responsive sizing
+      fallback={<Placeholder />} // Fallback component for errors
+      onError={(error) => console.error(error)}
     />
+  );
+}
+```
+
+### Using with useListContents
+
+The `useListContents` hook and `ShutoImage` component work together seamlessly:
+
+```tsx
+import { useListContents, ShutoImage } from '@shuto-img/react';
+
+function Gallery() {
+  const { data: files, isLoading, error } = useListContents('images/gallery');
+
+  if (isLoading) return <Loading />;
+  if (error) return <Error error={error} />;
+
+  return (
+    <div className="grid">
+      {files?.map((file) => (
+        <ShutoImage
+          key={file.fullPath}
+          path={file.fullPath} // fullPath is already properly formatted
+          alt={file.path}
+          w={800}
+          responsive
+        />
+      ))}
+    </div>
   );
 }
 ```
@@ -106,7 +135,7 @@ The `ShutoProvider` component initializes the Shuto client and makes it availabl
 interface ShutoProviderProps {
   children: ReactNode;
   config: ShutoConfig;
-  signerConfig: SignerConfig;
+  signerConfig?: SignerConfig;
 }
 ```
 
@@ -117,18 +146,21 @@ The `ShutoImage` component renders an optimized image using Shuto's image proces
 #### Props
 
 ```typescript
-interface ShutoImageProps
-  extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'> {
-  path: string;
-  params?: {
-    w?: number;
-    h?: number;
-    fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
-    fm?: 'webp' | 'jpeg' | 'png';
-    q?: number;
-    // ... other image parameters
-  };
-  alt?: string;
+interface ShutoImageProps {
+  path: string; // Path to the image, relative to storage root
+  w?: number; // Width
+  h?: number; // Height
+  fit?: 'clip' | 'crop' | 'fill'; // Resize mode
+  fm?: 'jpg' | 'jpeg' | 'png' | 'webp'; // Output format
+  q?: number; // Quality (1-100)
+  dpr?: number; // Device pixel ratio
+  blur?: number; // Blur amount
+  alt: string; // Alt text for accessibility
+  className?: string; // CSS class name
+  loading?: 'lazy' | 'eager'; // Image loading behavior
+  responsive?: boolean; // Enable responsive image sizing
+  fallback?: ReactNode; // Component to show on error
+  onError?: (error: Error) => void; // Error callback
 }
 ```
 
@@ -140,6 +172,21 @@ A hook that provides access to the Shuto client instance. Must be used within a 
 
 ```typescript
 const client = useShutoClient();
+```
+
+### useListContents
+
+A hook for listing contents of a directory.
+
+```typescript
+interface UseListContentsOptions {
+  filter?: string | RegExp; // Filter files by path
+}
+
+const { data, isLoading, error, refetch } = useListContents(
+  'folder/path',
+  options
+);
 ```
 
 ## Running unit tests

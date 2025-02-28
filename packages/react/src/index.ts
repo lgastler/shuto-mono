@@ -1,3 +1,3 @@
-export * from './lib/shuto-provider';
 export * from './lib/shuto-image';
-export * from './lib/shuto-client';
+export * from './lib/hooks';
+export * from './lib/shuto-provider';

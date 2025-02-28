@@ -1,28 +1,64 @@
-import { ReactNode, createContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { ShutoClient, ShutoConfig, SignerConfig } from '@shuto-img/api';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 interface ShutoContextValue {
   client: ShutoClient;
+  queryClient: QueryClient;
 }
 
 interface ShutoProviderProps {
-  children: ReactNode;
   config: ShutoConfig;
-  signerConfig: SignerConfig;
+  signerConfig?: SignerConfig;
+  children: React.ReactNode;
 }
 
-export const ShutoContext = createContext<ShutoContextValue | null>(null);
+const ShutoContext = createContext<ShutoContextValue | null>(null);
 
 export function ShutoProvider({
-  children,
   config,
   signerConfig,
+  children,
 }: ShutoProviderProps) {
-  const client = new ShutoClient(config, signerConfig);
+  const client = useMemo(
+    () => new ShutoClient(config, signerConfig),
+    [config, signerConfig]
+  );
+
+  const queryClient = useMemo(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 1000 * 60 * 5, // 5 minutes
+            gcTime: 1000 * 60 * 30, // 30 minutes
+          },
+        },
+      }),
+    []
+  );
 
   return (
-    <ShutoContext.Provider value={{ client }}>{children}</ShutoContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <ShutoContext.Provider value={{ client, queryClient }}>
+        {children}
+      </ShutoContext.Provider>
+    </QueryClientProvider>
   );
 }
 
-export default ShutoProvider;
+export function useShutoClient() {
+  const context = useContext(ShutoContext);
+  if (!context) {
+    throw new Error('useShutoClient must be used within a ShutoProvider');
+  }
+  return context.client;
+}
+
+export function useShutoQueryClient() {
+  const context = useContext(ShutoContext);
+  if (!context) {
+    throw new Error('useShutoQueryClient must be used within a ShutoProvider');
+  }
+  return context.queryClient;
+}
