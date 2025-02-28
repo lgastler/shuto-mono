@@ -8,25 +8,25 @@ const collections: Collection[] = [
   {
     id: 'travel',
     title: 'Travel',
-    folderPath: 'examples.ignored/travel',
+    folderPath: 'demo/travel',
     layout: 'masonry',
   },
   {
     id: 'minimalist',
     title: 'Minimalist',
-    folderPath: 'examples.ignored/minimalist',
+    folderPath: 'demo/minimalist',
     layout: 'masonry',
   },
   {
     id: 'nature',
     title: 'Nature',
-    folderPath: 'examples.ignored/nature',
+    folderPath: 'demo/nature',
     layout: 'masonry',
   },
   {
     id: 'gradients',
     title: 'Gradients',
-    folderPath: 'examples.ignored/gradients',
+    folderPath: 'demo/gradients',
     layout: 'masonry',
   },
 ];
