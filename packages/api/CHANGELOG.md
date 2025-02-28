@@ -1,3 +1,7 @@
+## 0.3.0 (2025-02-28)
+
+This was a version bump only for @shuto-img/api to align it with other projects, there were no code changes.
+
 ## 0.1.1 (2025-02-13)
 
 ### 🩹 Fixes
