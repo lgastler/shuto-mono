@@ -6,8 +6,8 @@ export function App() {
   return (
     <ShutoProvider
       config={{
-        baseUrl: 'http://localhost:8080',
-        apiKey: 'secret',
+        baseUrl: import.meta.env.VITE_SHUTO_API_URL,
+        apiKey: import.meta.env.VITE_SHUTO_API_KEY,
       }}
     >
       <Routes>
